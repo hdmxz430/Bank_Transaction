@@ -1,0 +1,53 @@
+/*C12*/SET SCHEMA PUBLIC
+drop table account if exists
+drop table transaction if exists
+drop table user if exists
+drop sequence hibernate_sequence if exists
+create sequence hibernate_sequence start with 1 increment by 1
+create table account (id bigint not null, balance double not null, user_id bigint, primary key (id))
+create table user (id bigint not null, password varchar(255), username varchar(255), primary key (id))
+alter table account add constraint FK7m8ru44m93ukyb61dfxw0apf6 foreign key (user_id) references user
+/*C18*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C19*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C20*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C12*/DISCONNECT
+/*C13*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C16*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C14*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C15*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C17*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C21*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C22*/SET SCHEMA PUBLIC
+alter table account drop constraint FK7m8ru44m93ukyb61dfxw0apf6
+drop table account if exists
+drop table transaction if exists
+drop table user if exists
+drop sequence hibernate_sequence if exists
+DISCONNECT
+/*C23*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C24*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C25*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C26*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C27*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C28*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C29*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C30*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C31*/SET SCHEMA PUBLIC
+DISCONNECT
