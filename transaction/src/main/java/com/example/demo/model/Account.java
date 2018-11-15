@@ -11,17 +11,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "account")
 public class Account {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
 	private double balance;
@@ -32,10 +33,12 @@ public class Account {
 	
 	@ManyToOne
 	@JoinColumn(name = "wallet_id")
+	@JsonManagedReference
 	private Wallet wallet;
 	
 	
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+	@JsonBackReference
 	private List<Transaction> transactions;
 	
 	public Account() {
@@ -43,6 +46,7 @@ public class Account {
 	
 	public Account(double balance) {
 		this.balance = balance;
+		transactions = new ArrayList<>();
 	}
 	
 	public long getId() {

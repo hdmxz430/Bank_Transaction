@@ -7,5 +7,5 @@ import com.example.demo.model.Transaction;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long>{
-
+	Transaction findById(long id);
 }

@@ -1,4 +1,4 @@
-/*C192*/SET SCHEMA PUBLIC
+/*C12*/SET SCHEMA PUBLIC
 drop table account if exists
 drop table transaction if exists
 drop table user if exists
@@ -6,58 +6,12 @@ drop table wallet if exists
 drop sequence hibernate_sequence if exists
 create sequence hibernate_sequence start with 1 increment by 1
 create table account (id bigint not null, balance double not null, user_id bigint, wallet_id bigint, primary key (id))
-create table user (id bigint not null, password varchar(255), username varchar(255), wallet_id bigint, primary key (id))
-create table wallet (id bigint not null, primary key (id))
-alter table account add constraint FK7m8ru44m93ukyb61dfxw0apf6 foreign key (user_id) references user
-alter table account add constraint FKjdvi9yc66l08wekvfh3qaagpu foreign key (wallet_id) references wallet
-alter table user add constraint FKposytpmub7fhua33j3ts2jot6 foreign key (wallet_id) references wallet
-INSERT INTO USER VALUES(1,'123','mobo3',NULL)
-ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 2
-COMMIT
-INSERT INTO WALLET VALUES(2)
-ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 3
-COMMIT
-alter table account drop constraint FK7m8ru44m93ukyb61dfxw0apf6
-alter table account drop constraint FKjdvi9yc66l08wekvfh3qaagpu
-alter table user drop constraint FKposytpmub7fhua33j3ts2jot6
-drop table account if exists
-drop table transaction if exists
-drop table user if exists
-drop table wallet if exists
-drop sequence hibernate_sequence if exists
-DISCONNECT
-/*C193*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C194*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C195*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C196*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C197*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C198*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C199*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C200*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C201*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C202*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C203*/SET SCHEMA PUBLIC
-drop table account if exists
-drop table transaction if exists
-drop table user if exists
-drop table wallet if exists
-drop sequence hibernate_sequence if exists
-create sequence hibernate_sequence start with 1 increment by 1
-create table account (id bigint not null, balance double not null, user_id bigint, wallet_id bigint, primary key (id))
+create table transaction (id bigint not null, from_account bigint not null, money double not null, timestamp timestamp, to_account bigint not null, type integer not null, account_id bigint, primary key (id))
 create table user (id bigint not null, password varchar(255), username varchar(255), primary key (id))
 create table wallet (id bigint not null, user_id bigint, primary key (id))
 alter table account add constraint FK7m8ru44m93ukyb61dfxw0apf6 foreign key (user_id) references user
 alter table account add constraint FKjdvi9yc66l08wekvfh3qaagpu foreign key (wallet_id) references wallet
+alter table transaction add constraint FK6g20fcr3bhr6bihgy24rq1r1b foreign key (account_id) references account
 alter table wallet add constraint FKbs4ogwiknsup4rpw8d47qw9dx foreign key (user_id) references user
 INSERT INTO USER VALUES(1,'123','mobo3')
 ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 2
@@ -65,8 +19,32 @@ COMMIT
 INSERT INTO WALLET VALUES(2,1)
 ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 3
 COMMIT
+INSERT INTO ACCOUNT VALUES(3,0.0E0,1,NULL)
+ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 4
+COMMIT
+INSERT INTO ACCOUNT VALUES(4,0.0E0,1,NULL)
+ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 5
+COMMIT
+INSERT INTO TRANSACTION VALUES(5,3,300.0E0,'2018-11-15 14:20:21.898000',-1,1,3)
+DELETE FROM ACCOUNT WHERE ID=3
+INSERT INTO ACCOUNT VALUES(3,300.0E0,1,NULL)
+ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 6
+COMMIT
+INSERT INTO TRANSACTION VALUES(6,3,100.0E0,'2018-11-15 14:21:21.299000',-1,2,3)
+DELETE FROM ACCOUNT WHERE ID=3
+INSERT INTO ACCOUNT VALUES(3,200.0E0,1,NULL)
+ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 7
+COMMIT
+INSERT INTO TRANSACTION VALUES(7,3,100.0E0,'2018-11-15 14:22:03.049000',4,3,3)
+DELETE FROM ACCOUNT WHERE ID=3
+INSERT INTO ACCOUNT VALUES(3,100.0E0,1,NULL)
+DELETE FROM ACCOUNT WHERE ID=4
+INSERT INTO ACCOUNT VALUES(4,100.0E0,1,NULL)
+ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 8
+COMMIT
 alter table account drop constraint FK7m8ru44m93ukyb61dfxw0apf6
 alter table account drop constraint FKjdvi9yc66l08wekvfh3qaagpu
+alter table transaction drop constraint FK6g20fcr3bhr6bihgy24rq1r1b
 alter table wallet drop constraint FKbs4ogwiknsup4rpw8d47qw9dx
 drop table account if exists
 drop table transaction if exists
@@ -74,21 +52,21 @@ drop table user if exists
 drop table wallet if exists
 drop sequence hibernate_sequence if exists
 DISCONNECT
-/*C204*/SET SCHEMA PUBLIC
+/*C13*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C205*/SET SCHEMA PUBLIC
+/*C14*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C206*/SET SCHEMA PUBLIC
+/*C15*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C207*/SET SCHEMA PUBLIC
+/*C16*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C208*/SET SCHEMA PUBLIC
+/*C17*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C209*/SET SCHEMA PUBLIC
+/*C18*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C210*/SET SCHEMA PUBLIC
+/*C19*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C211*/SET SCHEMA PUBLIC
+/*C20*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C212*/SET SCHEMA PUBLIC
+/*C21*/SET SCHEMA PUBLIC
 DISCONNECT

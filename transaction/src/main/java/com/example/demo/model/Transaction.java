@@ -10,30 +10,36 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "transaction")
 public class Transaction {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	
+	private long fromAccount;
+	private long toAccount;
+	private double money;
 	
 	private Timestamp timestamp;
 	private int type;
+	
 	@ManyToOne
 	@JoinColumn(name = "account_id")
+	@JsonManagedReference
 	private Account account;
 	
-	private long from;
-	private long to;
-	private double money;
+	public Transaction() {}
 	
 	public Transaction(Timestamp timestamp, int type, Account account, long from, long to, double money) {
 		// TODO Auto-generated constructor stub
 		this.timestamp = timestamp;
 		this.type = type;
 		this.account = account;
-		this.from = from;
-		this.to = to;
+		this.fromAccount = from;
+		this.toAccount = to;
 		this.money = money;
 	}
 	
@@ -66,20 +72,20 @@ public class Transaction {
 		this.account = account;
 	}
 	
-	public long getFrom() {
-		return from;
+	public long getFromAccount() {
+		return fromAccount;
 	}
 	
-	public void setFrom(long from) {
-		this.from = from;
+	public void setFromAccount(long from) {
+		this.fromAccount = from;
 	}
 	
-	public long getTo() {
-		return to;
+	public long getToAccount() {
+		return toAccount;
 	}
 	
-	public void setTo(long to) {
-		this.to = to;
+	public void setToAccount(long to) {
+		this.toAccount = to;
 	}
 	
 	public double getMoney() {

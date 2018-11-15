@@ -93,9 +93,7 @@ public class UserController {
 				throw new UserNotExistException("user not exist");
 			}
 			Wallet wallet = new Wallet(user);
-//			user.createWallet();
 			walletRepository.save(wallet);
-//			userRepository.save(user);
 			return "Create a new wallet successfully";
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -129,6 +127,11 @@ public class UserController {
 		}
 	}
 	
+	@RequestMapping(value = "/getAllAccounts", method = RequestMethod.GET)
+	public List<Account> getAccounts(){
+		return accountResitory.findAll();
+	}
+	
 	@RequestMapping(value = "/getLatestKTransactions/{accountId}/{k}", method = RequestMethod.GET)
 	public List<Transaction> getLatestKTransactions(@PathVariable long accountId, @PathVariable int k) throws AccountNotExistException, TransactionSizeLessThanKException {
 		Account account = accountResitory.findById(accountId);
@@ -144,62 +147,96 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/deposit", method = RequestMethod.POST)
-	public void deposit(@RequestParam("accountId") long accountId, @RequestParam("money") double money) throws AccountNotExistException, MoneyNegativeException {
-		if(money < 0) {
-			throw new MoneyNegativeException("money is negative");
+	public void deposit(@RequestBody String body) throws AccountNotExistException, MoneyNegativeException {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode jsonNode;
+		try {
+			jsonNode = mapper.readTree(body);
+			long accountId = jsonNode.get("accountId").asLong();
+			double money = jsonNode.get("money").asDouble();
+			if(money < 0) {
+				throw new MoneyNegativeException("money is negative");
+			}
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			Account account = accountResitory.findById(accountId);
+			if(account == null) {
+				throw new AccountNotExistException("account not exist");
+			}
+			Transaction transaction = new Transaction(timestamp, 1, account, accountId, -1, money);
+			account.setBalance(account.getBalance() + money);
+			account.addTransaction(transaction);
+			transactionRepository.save(transaction);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		Account account = accountResitory.findById(accountId);
-		if(account == null) {
-			throw new AccountNotExistException("account not exist");
-		}
-		Transaction transaction = new Transaction(timestamp, 1, account, accountId, -1, money);
-		account.setBalance(account.getBalance() + money);
-		account.addTransaction(transaction);
-		transactionRepository.save(transaction);
+		
 	}
 	
 	
 	
 	@RequestMapping(value = "/withdraw", method = RequestMethod.POST)
-	public void withdraw(@RequestParam("accountId") long accountId, @RequestParam("money") double money) throws AccountNotExistException, MoneyNegativeException, MoneyMoreThanBalanceException {
-		if(money < 0) {
-			throw new MoneyNegativeException("money is negative");
+	public void withdraw(@RequestBody String body) throws AccountNotExistException, MoneyNegativeException, MoneyMoreThanBalanceException {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode jsonNode;
+		try {
+			jsonNode = mapper.readTree(body);
+			long accountId = jsonNode.get("accountId").asLong();
+			double money = jsonNode.get("money").asDouble();
+			
+			if(money < 0) {
+				throw new MoneyNegativeException("money is negative");
+			}
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			Account account = accountResitory.findById(accountId);
+			if(account == null) {
+				throw new AccountNotExistException("account not exist");
+			}
+			if(account.getBalance() < money) {
+				throw new MoneyMoreThanBalanceException("money more than balance");
+			}
+			Transaction transaction = new Transaction(timestamp, 2, account, accountId, -1, money);
+			account.setBalance(account.getBalance() - money);
+			account.addTransaction(transaction);
+			transactionRepository.save(transaction);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		Account account = accountResitory.findById(accountId);
-		if(account == null) {
-			throw new AccountNotExistException("account not exist");
-		}
-		if(account.getBalance() < money) {
-			throw new MoneyMoreThanBalanceException("money more than balance");
-		}
-		Transaction transaction = new Transaction(timestamp, 2, account, accountId, -1, money);
-		account.setBalance(account.getBalance() - money);
-		account.addTransaction(transaction);
-		transactionRepository.save(transaction);
 	}
 	
 	@RequestMapping(value = "/transfer", method = RequestMethod.POST)
-	public void transfer(@RequestParam("from") long from, @RequestParam("to") long to, @RequestParam("money") double money) throws AccountNotExistException, MoneyMoreThanBalanceException, MoneyNegativeException {
-		if(money < 0) {
-			throw new MoneyNegativeException("money is negative");
+	public void transfer(@RequestBody String body) throws AccountNotExistException, MoneyMoreThanBalanceException, MoneyNegativeException {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode jsonNode;
+		try {
+			jsonNode = mapper.readTree(body);
+			long from = jsonNode.get("from").asLong();
+			long to = jsonNode.get("to").asLong();
+			double money = jsonNode.get("money").asDouble();
+			if(money < 0) {
+				throw new MoneyNegativeException("money is negative");
+			}
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			
+			Account fromAccount = accountResitory.findById(from);
+			Account toAccount = accountResitory.findById(to);
+			if(fromAccount == null || toAccount == null) {
+				throw new AccountNotExistException("account not exist");
+			}
+			if(fromAccount.getBalance() < money) {
+				throw new MoneyMoreThanBalanceException("money more than balance");
+			}
+			fromAccount.setBalance(fromAccount.getBalance() - money);
+			toAccount.setBalance(toAccount.getBalance() + money);
+			Transaction transaction = new Transaction(timestamp, 3, fromAccount, from, to, money);
+			fromAccount.addTransaction(transaction);
+			toAccount.addTransaction(transaction);
+			transactionRepository.save(transaction);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		
-		Account fromAccount = accountResitory.findById(from);
-		Account toAccount = accountResitory.findById(to);
-		if(fromAccount == null || toAccount == null) {
-			throw new AccountNotExistException("account not exist");
-		}
-		if(fromAccount.getBalance() < money) {
-			throw new MoneyMoreThanBalanceException("money more than balance");
-		}
-		fromAccount.setBalance(fromAccount.getBalance() - money);
-		toAccount.setBalance(toAccount.getBalance() + money);
-		Transaction transaction = new Transaction(timestamp, 3, fromAccount, from, to, money);
-		fromAccount.addTransaction(transaction);
-		toAccount.addTransaction(transaction);
-		transactionRepository.save(transaction);
 	}
 }

@@ -1,10 +1,7 @@
 package com.example.demo.model;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -16,25 +13,25 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.example.demo.repository.AccountRepository;
-import com.example.demo.repository.TransactionRepository;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "wallet")
 public class Wallet {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
+	@JsonManagedReference
 	private User user;
 	
 	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL)
+	@JsonBackReference
 	private List<Account> accounts;
 	
 	public Wallet() {}
