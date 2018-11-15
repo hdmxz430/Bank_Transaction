@@ -8,26 +8,30 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
-public abstract class Transaction {
+@Table(name = "transaction")
+public class Transaction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long id;
 	
 	private Timestamp timestamp;
 	private int type;
+	@ManyToOne
+	@JoinColumn(name = "account_id")
+	private Account account;
 	
-	private Account from;
-	private Account to;
+	private long from;
+	private long to;
 	private double money;
 	
-	private Wallet concreteWallet;
-	
-	public Transaction(Timestamp timestamp, int type, Account from, Account to, double money) {
+	public Transaction(Timestamp timestamp, int type, Account account, long from, long to, double money) {
 		// TODO Auto-generated constructor stub
 		this.timestamp = timestamp;
 		this.type = type;
+		this.account = account;
 		this.from = from;
 		this.to = to;
 		this.money = money;
@@ -53,19 +57,28 @@ public abstract class Transaction {
 		this.type = type;
 	}
 	
-	public Account getFrom() {
+	
+	public Account getAccount() {
+		return account;
+	}
+	
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+	
+	public long getFrom() {
 		return from;
 	}
 	
-	public void setFrom(Account from) {
+	public void setFrom(long from) {
 		this.from = from;
 	}
 	
-	public Account getTo() {
+	public long getTo() {
 		return to;
 	}
 	
-	public void setTo(Account to) {
+	public void setTo(long to) {
 		this.to = to;
 	}
 	
@@ -76,19 +89,5 @@ public abstract class Transaction {
 	public void setMoney(double money) {
 		this.money = money;
 	}
-	
-	@ManyToOne
-	@JoinColumn(name = "concrete_wallet_id")
-	public Wallet getConcreteWallet() {
-		return concreteWallet;
-	}
-	
-	public void setConcreteWallet(Wallet concreteWallet) {
-		this.concreteWallet = concreteWallet;
-	}
-	
-	public abstract void action() throws MoneyNegativeException, MoneyMoreThanBalanceException;
-	
-	
 	
 }
